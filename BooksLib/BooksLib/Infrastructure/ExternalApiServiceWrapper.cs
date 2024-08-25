@@ -18,16 +18,48 @@ namespace BooksLib.Infrastructure
             _options = options.Value;
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string requestUri)
+        public async Task<Tuple<ExitCodeEnum, HttpResponseMessage>> GetAsync(string requestUri)
         {
+            SetBearerToken();
             var response = await _httpClient.GetAsync(requestUri);
-            return response;
+            var exitCode = HandleErrors(response);
+            return Tuple.Create(exitCode, response);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content)
+        public async Task<Tuple<ExitCodeEnum, HttpResponseMessage>> PostAsync(string requestUri, HttpContent content)
         {
+            SetBearerToken();
             var response = await _httpClient.PostAsync(requestUri, content);
-            return response;
+            var exitCode = HandleErrors(response);
+            return Tuple.Create(exitCode, response);
+        }
+
+        private void SetBearerToken()
+        {
+            if (!string.IsNullOrEmpty(_options.BearerToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.BearerString, _options.BearerToken);
+            }
+        }
+
+        private ExitCodeEnum HandleErrors(HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                var statusCode = (int)response.StatusCode;
+                MapStatusCodeToExitCode(statusCode);
+            }
+
+            return ExitCodeEnum.NoErrors;
+        }
+
+        private ExitCodeEnum MapStatusCodeToExitCode(int statusCode)
+        {
+            return statusCode switch
+            {
+                200 => ExitCodeEnum.NoErrors,
+                500 => ExitCodeEnum.HttpError
+            };
         }
     }
 }

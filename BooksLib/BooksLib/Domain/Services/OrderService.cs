@@ -42,9 +42,9 @@ namespace BooksLib.Domain.Services
 
             var response = await _externalApiServiceWrapper.GetAsync(Constants.ApiOrdersCall);
 
-            if (response.IsSuccessStatusCode)
+            if (response.Item1 == ExitCodeEnum.NoErrors)
             {
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Item2.Content.ReadAsStringAsync();
                 var ordersList = JsonConvert.DeserializeObject<List<OrderDTO>>(content);
 
                 await _orderCacheManager.AddCachedOrdersAsync(ordersList, TimeSpan.FromMinutes(_options.OrdersCacheExpirationTime));
@@ -52,7 +52,7 @@ namespace BooksLib.Domain.Services
                 return GetPaginatedResult(ordersList, getOrdersRequest.PageNumber, getOrdersRequest.PageSize);
             }
 
-            return new GetOrdersResponseDTO() { Orders = new List<OrderDTO>() };
+            return new GetOrdersResponseDTO() { Orders = new List<OrderDTO>(), ExitCode = response.Item1};
         }
 
         private GetOrdersResponseDTO GetPaginatedResult(List<OrderDTO> orders, int pageNumber, int pageSize)

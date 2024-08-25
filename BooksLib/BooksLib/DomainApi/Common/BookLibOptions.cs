@@ -1,6 +1,6 @@
 ﻿namespace BooksLib.DomainApi.Common
 {
-    public class MyApiOptions
+    public class BookLibOptions
     {
         /// <summary>
         /// External API base URL
@@ -11,5 +11,10 @@
         /// Authorization Bearer token
         /// </summary>
         public string BearerToken { get; set; }
+
+        /// <summary>
+        /// Expiration time in minutes for orders' cache
+        /// </summary>
+        public int OrdersCacheExpirationTime { get; set; }
     }
 }

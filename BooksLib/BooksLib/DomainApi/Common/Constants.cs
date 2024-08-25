@@ -9,5 +9,6 @@
         public const string ApiOrdersCall = "api/orders";
         public const string BearerString = "bearer";
         public const string ApplicationJsonFormat = "application/json";
+        public const string ConfigurationOptionsString = "BookLibOptions";
     }
 }

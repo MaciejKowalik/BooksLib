@@ -10,9 +10,9 @@ namespace BooksLib.Infrastructure
     public class ExternalApiServiceWrapper
     {
         private readonly HttpClient _httpClient;
-        private readonly MyApiOptions _options;
+        private readonly BookLibOptions _options;
 
-        public ExternalApiServiceWrapper(HttpClient httpClient, IOptions<MyApiOptions> options)
+        public ExternalApiServiceWrapper(HttpClient httpClient, IOptions<BookLibOptions> options)
         {
             _httpClient = httpClient;
             _options = options.Value;

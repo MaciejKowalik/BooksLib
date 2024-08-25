@@ -7,13 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Domain\ExternalModels\ExternalOrderLineDTO.cs" />
-    <Compile Remove="Domain\Services\OrderService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Domain\ExternalModels\ExternalOrderLineDTO.cs" />
-    <None Include="Domain\Services\OrderService.cs" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
 </Project>

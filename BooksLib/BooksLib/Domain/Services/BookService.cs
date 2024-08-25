@@ -33,7 +33,7 @@ namespace BooksLib.Domain.Services
 
             var response = await _externalApiServiceWrapper.PostAsync(Constants.ApiBooksCall, content);
 
-            return new BaseResponseDTO();
+            return new BaseResponseDTO() { ExitCode = response.Item1 };
         }
 
         /// <summary>
@@ -44,15 +44,15 @@ namespace BooksLib.Domain.Services
         {
             var response = await _externalApiServiceWrapper.GetAsync(Constants.ApiBooksCall);
 
-            if (response.IsSuccessStatusCode)
+            if (response.Item1 == ExitCodeEnum.NoErrors)
             {
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Item2.Content.ReadAsStringAsync();
                 var bookList = JsonConvert.DeserializeObject<List<BookDTO>>(content);
 
                 return new GetBooksResponseDTO() { Books = bookList };
             }
 
-            return new GetBooksResponseDTO() { Books = new List<BookDTO>() };
+            return new GetBooksResponseDTO() { Books = new List<BookDTO>(), ExitCode = response.Item1 };
         }
     }
 }

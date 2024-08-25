@@ -1,7 +1,11 @@
 ﻿using BooksLib.Domain.Abstraction;
+using BooksLib.Domain.Models;
 using BooksLib.DomainApi.Common;
 using BooksLib.DomainApi.DTOs.AddBook;
 using BooksLib.DomainApi.DTOs.GetBooks;
+using BooksLib.Infrastructure;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace BooksLib.Domain.Services
 {
@@ -10,23 +14,45 @@ namespace BooksLib.Domain.Services
     /// </summary>
     public class BookService : IBookService
     {
+        private readonly ExternalApiServiceWrapper _externalApiServiceWrapper;
+
+        public BookService(ExternalApiServiceWrapper externalApiServiceWrapper)
+        {
+            _externalApiServiceWrapper = externalApiServiceWrapper;
+        }
+
         /// <summary>
         /// Method for adding a book via external API
         /// </summary>
         /// <param name="addBookRequest">Request parameters</param>
         /// <returns>Base response</returns>
-        public Task<BaseResponseDTO> AddBookAsync(AddBookRequestDTO addBookRequest)
+        public async Task<BaseResponseDTO> AddBookAsync(AddBookRequestDTO addBookRequest)
         {
-            throw new NotImplementedException();
+            var serializedBook = JsonConvert.SerializeObject(addBookRequest.Book);
+            var content = new StringContent(serializedBook, Encoding.UTF8, Constants.ApplicationJsonFormat);
+
+            var response = await _externalApiServiceWrapper.PostAsync(Constants.ApiBooksCall, content);
+
+            return new BaseResponseDTO();
         }
 
         /// <summary>
         /// Method for getting the list of books
         /// </summary>
         /// <returns>List of books</returns>
-        public Task<GetBooksResponseDTO> GetBooksAsync()
+        public async Task<GetBooksResponseDTO> GetBooksAsync()
         {
-            throw new NotImplementedException();
+            var response = await _externalApiServiceWrapper.GetAsync(Constants.ApiBooksCall);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var bookList = JsonConvert.DeserializeObject<List<BookDTO>>(content);
+
+                return new GetBooksResponseDTO() { Books = bookList };
+            }
+
+            return new GetBooksResponseDTO() { Books = new List<BookDTO>() };
         }
     }
 }

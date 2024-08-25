@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Domain\ExternalModels\ExternalOrderLineDTO.cs" />
+    <Compile Remove="Domain\Services\OrderService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Domain\ExternalModels\ExternalOrderLineDTO.cs" />
+    <None Include="Domain\Services\OrderService.cs" />
+  </ItemGroup>
+
 </Project>

@@ -1,13 +1,10 @@
 ﻿using BooksLib.DomainApi.Common;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Net;
 using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
 
 namespace BooksLib.Infrastructure
 {
-    public class ExternalApiServiceWrapper
+    public class ExternalApiServiceWrapper : IExternalApiServiceWrapper
     {
         private readonly HttpClient _httpClient;
         private readonly BookLibOptions _options;

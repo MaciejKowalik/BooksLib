@@ -3,7 +3,6 @@ using BooksLib.Domain.Abstraction;
 using BooksLib.Domain.ExternalModels;
 using BooksLib.Domain.Models;
 using BooksLib.DomainApi.Common;
-using BooksLib.DomainApi.DTOs.GetBooks;
 using BooksLib.DomainApi.DTOs.GetOrders;
 using BooksLib.DomainApi.Validators;
 using BooksLib.Infrastructure;
@@ -18,12 +17,12 @@ namespace BooksLib.Domain.Services
     /// </summary>
     public class OrderService : IOrderService
     {
-        private readonly ExternalApiServiceWrapper _externalApiServiceWrapper;
+        private readonly IExternalApiServiceWrapper _externalApiServiceWrapper;
         private readonly IOrderCacheManager _orderCacheManager;
         private readonly IMapper _mapper;
         private readonly BookLibOptions _options;
 
-        public OrderService(ExternalApiServiceWrapper externalApiServiceWrapper, IOrderCacheManager orderCacheManager,
+        public OrderService(IExternalApiServiceWrapper externalApiServiceWrapper, IOrderCacheManager orderCacheManager,
             IOptions<BookLibOptions> options, IMapper mapper)
         {
             _externalApiServiceWrapper = externalApiServiceWrapper;

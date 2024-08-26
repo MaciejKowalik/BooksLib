@@ -10,7 +10,7 @@
         /// <summary>
         /// Book title
         /// </summary>
-        public int Title { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Book price

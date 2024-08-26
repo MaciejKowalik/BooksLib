@@ -28,6 +28,7 @@ namespace BooksLib.Infrastructure.Extensions
 
             services.AddTransient<IBookService, BookService>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IExternalApiServiceWrapper, ExternalApiServiceWrapper>();
 
             return services;
         }

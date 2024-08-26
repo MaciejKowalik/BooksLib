@@ -7,6 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace BooksLib.Infrastructure.Extensions
 {
+    /// <summary>
+    /// File contains extension methods for registering and configuring services within the dependency injection container in an application.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)

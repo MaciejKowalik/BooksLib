@@ -4,6 +4,9 @@ using System.Net.Http.Headers;
 
 namespace BooksLib.Infrastructure
 {
+    /// <summary>
+    /// Service wrapper implementing methods for HTTP requests, set authorization data, handle errors
+    /// </summary>
     public class ExternalApiServiceWrapper : IExternalApiServiceWrapper
     {
         private readonly HttpClient _httpClient;
@@ -15,6 +18,11 @@ namespace BooksLib.Infrastructure
             _options = options.Value;
         }
 
+        /// <summary>
+        /// Method for getting data with HTTP request
+        /// </summary>
+        /// <param name="requestUri">External API endpoint hit</param>
+        /// <returns>Exit code with http response</returns>
         public async Task<Tuple<ExitCodeEnum, HttpResponseMessage>> GetAsync(string requestUri)
         {
             SetBearerToken();
@@ -23,6 +31,12 @@ namespace BooksLib.Infrastructure
             return Tuple.Create(exitCode, response);
         }
 
+        /// <summary>
+        /// Method for adding data with HTTP request
+        /// </summary>
+        /// <param name="requestUri">External API endpoint git</param>
+        /// <param name="content">Http request content</param>
+        /// <returns>Exit code with http response</returns>
         public async Task<Tuple<ExitCodeEnum, HttpResponseMessage>> PostAsync(string requestUri, HttpContent content)
         {
             SetBearerToken();
@@ -31,6 +45,9 @@ namespace BooksLib.Infrastructure
             return Tuple.Create(exitCode, response);
         }
 
+        /// <summary>
+        /// Private method for setting the authorization token in header of HTTP requests
+        /// </summary>
         private void SetBearerToken()
         {
             if (!string.IsNullOrEmpty(_options.BearerToken))
@@ -39,6 +56,11 @@ namespace BooksLib.Infrastructure
             }
         }
 
+        /// <summary>
+        /// Private method handling error responses
+        /// </summary>
+        /// <param name="response">HTTP response message</param>
+        /// <returns>Exit code</returns>
         private ExitCodeEnum HandleErrors(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
@@ -50,6 +72,11 @@ namespace BooksLib.Infrastructure
             return ExitCodeEnum.NoErrors;
         }
 
+        /// <summary>
+        /// Private method for mapping HTTP status codes to project internal exit codes
+        /// </summary>
+        /// <param name="statusCode">HTTP status code</param>
+        /// <returns>Exit code</returns>
         private ExitCodeEnum MapStatusCodeToExitCode(int statusCode)
         {
             return statusCode switch

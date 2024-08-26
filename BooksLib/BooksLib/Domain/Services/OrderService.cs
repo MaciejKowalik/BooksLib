@@ -100,7 +100,7 @@ namespace BooksLib.Domain.Services
                 return GetPaginatedResult(mappedOrdersList, getOrdersRequest.PageNumber, getOrdersRequest.PageSize);
             }
 
-            return new GetOrdersResponseDTO { Orders = new List<OrderDTO>(), ExitCode = response.Item1, Message = MessagesProvider.GetMessageForExitCode(response.Item1)};
+            return new GetOrdersResponseDTO { Orders = new List<OrderDTO>(), Metainfo = new MetainfoDTO { Count = 0, TotalCount = 0 }, ExitCode = response.Item1, Message = MessagesProvider.GetMessageForExitCode(response.Item1)};
         }
 
         private GetOrdersResponseDTO GetPaginatedResult(List<OrderDTO> orders, int pageNumber, int pageSize)
@@ -109,7 +109,10 @@ namespace BooksLib.Domain.Services
                                         .Take(pageSize)
                                         .ToList();
 
-            return new GetOrdersResponseDTO() { Orders = paginatedOrders };
+            return new GetOrdersResponseDTO
+            {
+                Orders = paginatedOrders,
+                Metainfo = new MetainfoDTO { Count = paginatedOrders.Count, TotalCount = orders.Count } };
         }
     }
 }

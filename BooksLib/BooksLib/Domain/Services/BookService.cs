@@ -17,10 +17,10 @@ namespace BooksLib.Domain.Services
     /// </summary>
     public class BookService : IBookService
     {
-        private readonly ExternalApiServiceWrapper _externalApiServiceWrapper;
+        private readonly IExternalApiServiceWrapper _externalApiServiceWrapper;
         private readonly IMapper _mapper;
 
-        public BookService(ExternalApiServiceWrapper externalApiServiceWrapper, IMapper mapper)
+        public BookService(IExternalApiServiceWrapper externalApiServiceWrapper, IMapper mapper)
         {
             _externalApiServiceWrapper = externalApiServiceWrapper;
             _mapper = mapper;

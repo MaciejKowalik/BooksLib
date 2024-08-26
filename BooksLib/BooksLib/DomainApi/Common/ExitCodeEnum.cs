@@ -15,8 +15,25 @@ namespace BooksLib.DomainApi.Common
         SerializeDeserializeError = 2,
         [Description("Mapping error")]
         MappingError = 3,
-        [Description("Http error")]
-        HttpError = 500
-
+        [Description("Unknown error")]
+        UnknownError = 9,
+        [Description("Bad request")]
+        BadRequest = 400,
+        [Description("Unauthorized")]
+        Unauthorized = 401,
+        [Description("Access forbidden")]
+        Forbidden = 403,
+        [Description("Resource not found")]
+        NotFound = 404,
+        [Description("Conflict with resource")]
+        Conflict = 409,
+        [Description("Internal server error")]
+        InternalError = 500,
+        [Description("Invalid response from upstream server")]
+        BadGateway = 502,
+        [Description("Service unavailable")]
+        ServiceUnavailable = 503,
+        [Description("Timeout")]
+        GatewayTimeout = 504,
     }
 }

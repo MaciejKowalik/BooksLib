@@ -6,10 +6,17 @@
     public class BaseResponseDTO
     {
         public ExitCodeEnum ExitCode { get; set; }
+        public string Message { get; set; }
 
         public BaseResponseDTO()
         {
             ExitCode = ExitCodeEnum.NoErrors;
+        }
+
+        public BaseResponseDTO(ExitCodeEnum exitCode, string message)
+        {
+            ExitCode = exitCode;
+            Message = message;
         }
     }
 }

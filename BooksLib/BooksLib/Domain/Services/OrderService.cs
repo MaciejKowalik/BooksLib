@@ -1,7 +1,11 @@
-﻿using BooksLib.Domain.Abstraction;
+﻿using AutoMapper;
+using BooksLib.Domain.Abstraction;
+using BooksLib.Domain.ExternalModels;
 using BooksLib.Domain.Models;
 using BooksLib.DomainApi.Common;
+using BooksLib.DomainApi.DTOs.GetBooks;
 using BooksLib.DomainApi.DTOs.GetOrders;
+using BooksLib.DomainApi.Validators;
 using BooksLib.Infrastructure;
 using BooksLib.Infrastructure.Cache;
 using Microsoft.Extensions.Options;
@@ -16,13 +20,15 @@ namespace BooksLib.Domain.Services
     {
         private readonly ExternalApiServiceWrapper _externalApiServiceWrapper;
         private readonly IOrderCacheManager _orderCacheManager;
+        private readonly IMapper _mapper;
         private readonly BookLibOptions _options;
 
         public OrderService(ExternalApiServiceWrapper externalApiServiceWrapper, IOrderCacheManager orderCacheManager,
-            IOptions<BookLibOptions> options)
+            IOptions<BookLibOptions> options, IMapper mapper)
         {
             _externalApiServiceWrapper = externalApiServiceWrapper;
             _orderCacheManager = orderCacheManager;
+            _mapper = mapper;
             _options = options.Value;
         }
 
@@ -33,6 +39,19 @@ namespace BooksLib.Domain.Services
         /// <returns>List of orders</returns>
         public async Task<GetOrdersResponseDTO> GetOrdersAsync(GetOrdersRequestDTO getOrdersRequest)
         {
+            var requestValidator = new GetOrdersRequestDTOValidator();
+            var validationResult = requestValidator.Validate(getOrdersRequest);
+
+            if (!validationResult.IsValid)
+            {
+                return new GetOrdersResponseDTO
+                {
+                    Orders = new List<OrderDTO>(),
+                    ExitCode = ExitCodeEnum.ValidationError,
+                    Message = ResponseMessages.ValidationErrorMessage + validationResult.Errors.Select(x => x.ErrorMessage)
+                };
+            }
+
             var cachedOrders = await _orderCacheManager.GetCachedOrdersAsync();
 
             if (cachedOrders != null)
@@ -45,14 +64,43 @@ namespace BooksLib.Domain.Services
             if (response.Item1 == ExitCodeEnum.NoErrors)
             {
                 var content = await response.Item2.Content.ReadAsStringAsync();
-                var ordersList = JsonConvert.DeserializeObject<List<OrderDTO>>(content);
+                var ordersList = new List<ExternalOrderDTO>();
+                var mappedOrdersList = new List<OrderDTO>();
 
-                await _orderCacheManager.AddCachedOrdersAsync(ordersList, TimeSpan.FromMinutes(_options.OrdersCacheExpirationTime));
+                try
+                {
+                    ordersList = JsonConvert.DeserializeObject<List<ExternalOrderDTO>>(content);
+                }
+                catch (Exception ex)
+                {
+                    return new GetOrdersResponseDTO
+                    {
+                        Orders = new List<OrderDTO>(),
+                        ExitCode = ExitCodeEnum.SerializeDeserializeError,
+                        Message = ResponseMessages.SerializationDeserializationError + ex.Message,
+                    };
+                }
 
-                return GetPaginatedResult(ordersList, getOrdersRequest.PageNumber, getOrdersRequest.PageSize);
+                try
+                {
+                    mappedOrdersList = _mapper.Map<List<OrderDTO>>(ordersList);
+                }
+                catch (Exception ex)
+                {
+                    return new GetOrdersResponseDTO
+                    {
+                        Orders = new List<OrderDTO>(),
+                        ExitCode = ExitCodeEnum.MappingError,
+                        Message = ResponseMessages.MappingErrorMessage + ex.Message,
+                    };
+                }
+
+                await _orderCacheManager.AddCachedOrdersAsync(mappedOrdersList, TimeSpan.FromMinutes(_options.OrdersCacheExpirationTime));
+
+                return GetPaginatedResult(mappedOrdersList, getOrdersRequest.PageNumber, getOrdersRequest.PageSize);
             }
 
-            return new GetOrdersResponseDTO() { Orders = new List<OrderDTO>(), ExitCode = response.Item1};
+            return new GetOrdersResponseDTO { Orders = new List<OrderDTO>(), ExitCode = response.Item1, Message = MessagesProvider.GetMessageForExitCode(response.Item1)};
         }
 
         private GetOrdersResponseDTO GetPaginatedResult(List<OrderDTO> orders, int pageNumber, int pageSize)

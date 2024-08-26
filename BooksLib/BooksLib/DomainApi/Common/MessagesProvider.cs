@@ -18,6 +18,16 @@
                 ExitCodeEnum.MappingError => ResponseMessages.MappingErrorMessage,
                 ExitCodeEnum.ValidationError => ResponseMessages.ValidationErrorMessage,
                 ExitCodeEnum.SerializeDeserializeError => ResponseMessages.ValidationErrorMessage,
+                ExitCodeEnum.BadRequest => ResponseMessages.BadRequestErrorMessage,
+                ExitCodeEnum.Unauthorized => ResponseMessages.UnauthorizedErrorMessage,
+                ExitCodeEnum.Forbidden => ResponseMessages.ForbiddenErrorMessage,
+                ExitCodeEnum.NotFound => ResponseMessages.NotFoundErrorMessage,
+                ExitCodeEnum.Conflict => ResponseMessages.ConflictErrorMessage,
+                ExitCodeEnum.InternalError => ResponseMessages.InternalErrorMessage,
+                ExitCodeEnum.BadGateway => ResponseMessages.BadGatewayErrorMessage,
+                ExitCodeEnum.ServiceUnavailable => ResponseMessages.ServiceUnavailableErrorMessage,
+                ExitCodeEnum.GatewayTimeout => ResponseMessages.TimeoutErrorMessage,
+                ExitCodeEnum.UnknownError => ResponseMessages.UnknownErrorMessage,
                 _ => ResponseMessages.UnknownErrorMessage
             };
         }

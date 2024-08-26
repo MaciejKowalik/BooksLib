@@ -58,7 +58,18 @@ namespace BooksLib.Infrastructure
             return statusCode switch
             {
                 200 => ExitCodeEnum.NoErrors,
-                500 => ExitCodeEnum.HttpError
+                201 => ExitCodeEnum.NoErrors,
+                204 => ExitCodeEnum.NoErrors,
+                400 => ExitCodeEnum.BadRequest,
+                401 => ExitCodeEnum.Unauthorized,
+                403 => ExitCodeEnum.Forbidden,
+                404 => ExitCodeEnum.NotFound,
+                409 => ExitCodeEnum.Conflict,
+                500 => ExitCodeEnum.InternalError,
+                502 => ExitCodeEnum.BadGateway,
+                503 => ExitCodeEnum.ServiceUnavailable,
+                504 => ExitCodeEnum.GatewayTimeout,
+                _ => ExitCodeEnum.UnknownError
             };
         }
     }
